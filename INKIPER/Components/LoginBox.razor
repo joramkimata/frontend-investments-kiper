@@ -1,0 +1,45 @@
+@using Microsoft.AspNetCore.Components
+@using INKIPER.Dtos
+@using MudBlazor
+@inject NavigationManager NavigationManager
+
+<MudForm Model="@_loginDto" @ref="_form" @bind-IsValid="@_success">
+    <MudPaper Elevation="9" Class="login-box-inner-p">
+        @if (_loading)
+        {
+            <MudProgressLinear Size="Size.Large" Style="background-color: #f6b26d" Indeterminate="true"/>
+        }
+    
+        <MudCardContent>
+            <div class="logo-inner">
+                <img src="img/logo.png"/>
+                <h2>InvestmentsKiper - LOGIN</h2>
+            </div>
+            <MudTextField Immediate="true"  @bind-Value="_loginDto.Username" Required="true" RequiredError="Username is required" Style="margin-bottom: 10px" T="string" Label="Username" Variant="Variant.Outlined"></MudTextField>
+            <MudTextField Immediate="true" @bind-Value="_loginDto.Password" Required="true" RequiredError="Password is required" T="string" Label="Password" Variant="Variant.Outlined"
+                          InputType="InputType.Password"/>
+        </MudCardContent>
+        <MudCardActions Style="margin-bottom: 20px">
+            <MudButton OnClick="async () => await OnSubmit()" Disabled="@(!_success)" Style="background-color: #44bc59; height: 50px" FullWidth="true" Size="Size.Large" ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+        </MudCardActions>
+    </MudPaper>
+</MudForm>
+
+@code
+{
+    bool _success;
+    bool _loading;
+    MudForm _form = new();
+    LoginDto _loginDto = new();
+
+    private async Task OnSubmit()
+    {
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            _loading = true;
+            _success = false;
+        }
+        
+    }
+}

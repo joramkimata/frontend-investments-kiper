@@ -1,0 +1,14 @@
+@page
+@using INKIPER.Components
+@model INKIPER.Pages.Login
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = "_LoginLayout";
+}
+
+<div class="login-box">
+    <div class="login-box-inner">
+        @(await Html.RenderComponentAsync<LoginBox>(RenderMode.Server))
+    </div>
+</div>
