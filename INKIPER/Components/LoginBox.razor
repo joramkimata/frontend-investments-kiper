@@ -17,25 +17,28 @@
         {
             <MudProgressLinear Size="Size.Large" Style="background-color: #f6b26d" Indeterminate="true"/>
         }
-        
+
         @if (loginError)
         {
             <MudAlert Severity="Severity.Error">Invalid Login</MudAlert>
         }
-      
-    
+
+
         <MudCardContent>
             <div class="logo-inner">
                 <img src="img/logo.png"/>
                 <h2>InvestmentsKiper - LOGIN</h2>
             </div>
-            <MudTextField Immediate="true"  @bind-Value="_loginDto.Email" Required="true" RequiredError="Username is required" Style="margin-bottom: 10px" T="string" Label="Username" Variant="Variant.Outlined"></MudTextField>
-            <MudTextField Immediate="true" @bind-Value="_loginDto.Password" Required="true" RequiredError="Password is required" T="string" Label="Password" Variant="Variant.Outlined"
-                          InputType="InputType.Password"/>
+            <MudTextField Immediate="true" @bind-Value="_loginDto.Email" Required="true" RequiredError="Username is required" Style="margin-bottom: 10px" T="string" Label="Username" Variant="Variant.Outlined"></MudTextField>
+
+            <MudTextField OnKeyDown="OnKeyDown" Immediate="true" Required="true" RequiredError="Password is required" @bind-Value="_loginDto.Password" Label="Password" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password"/>
+
         </MudCardContent>
         <MudCardActions Style="margin-bottom: 20px">
             <MudButton OnClick="async () => await OnSubmit()" Disabled="@(!_success)" Style="background-color: #44bc59; height: 50px" FullWidth="true" Size="Size.Large" ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
         </MudCardActions>
+        
+        <h2 style="text-align: center">Powered By Izweb Technologies LTD &COPY;</h2>
     </MudPaper>
 </MudForm>
 
@@ -46,14 +49,40 @@
     MudForm _form = new();
     LoginDto _loginDto = new();
     bool loginError;
-    
+
+    async void OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            await OnSubmit();
+        }
+    }
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void ButtonTestclick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
     private async Task OnSubmit()
     {
-        
         await _form.Validate();
         if (_form.IsValid)
         {
-            
             _loading = true;
             _success = false;
             var response = await MyAuthenticationStateProvider.LoginAsync(_loginDto.Email, _loginDto.Password);
@@ -68,12 +97,11 @@
                 NavigationManager.NavigateTo("/", true, true);
             }
         }
-        
     }
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await  MyUserService.FetchUserFromBrowserAsync();
+        var response = await MyUserService.FetchUserFromBrowserAsync();
         if (response != null)
         {
             NavigationManager.NavigateTo("/", true, true);
