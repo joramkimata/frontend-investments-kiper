@@ -1,7 +1,15 @@
 @using Microsoft.AspNetCore.Components
 @using INKIPER.Dtos
+@using INKIPER.Services
 @using MudBlazor
+@using INKIPER.Auth
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject NavigationManager NavigationManager
+@inject MyAuthenticationStateProvider MyAuthenticationStateProvider
+@inject ISnackbar Snackbar
+@attribute [AllowAnonymous]
+@inject MyUserService MyUserService
 
 <MudForm Model="@_loginDto" @ref="_form" @bind-IsValid="@_success">
     <MudPaper Elevation="9" Class="login-box-inner-p">
@@ -9,13 +17,19 @@
         {
             <MudProgressLinear Size="Size.Large" Style="background-color: #f6b26d" Indeterminate="true"/>
         }
+        
+        @if (loginError)
+        {
+            <MudAlert Severity="Severity.Error">Invalid Login</MudAlert>
+        }
+      
     
         <MudCardContent>
             <div class="logo-inner">
                 <img src="img/logo.png"/>
                 <h2>InvestmentsKiper - LOGIN</h2>
             </div>
-            <MudTextField Immediate="true"  @bind-Value="_loginDto.Username" Required="true" RequiredError="Username is required" Style="margin-bottom: 10px" T="string" Label="Username" Variant="Variant.Outlined"></MudTextField>
+            <MudTextField Immediate="true"  @bind-Value="_loginDto.Email" Required="true" RequiredError="Username is required" Style="margin-bottom: 10px" T="string" Label="Username" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Immediate="true" @bind-Value="_loginDto.Password" Required="true" RequiredError="Password is required" T="string" Label="Password" Variant="Variant.Outlined"
                           InputType="InputType.Password"/>
         </MudCardContent>
@@ -31,15 +45,39 @@
     bool _loading;
     MudForm _form = new();
     LoginDto _loginDto = new();
-
+    bool loginError;
+    
     private async Task OnSubmit()
     {
+        
         await _form.Validate();
         if (_form.IsValid)
         {
+            
             _loading = true;
             _success = false;
+            var response = await MyAuthenticationStateProvider.LoginAsync(_loginDto.Email, _loginDto.Password);
+            _loading = false;
+            _success = true;
+            if (response == null)
+            {
+                loginError = true;
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/", true, true);
+            }
         }
         
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await  MyUserService.FetchUserFromBrowserAsync();
+        if (response != null)
+        {
+            NavigationManager.NavigateTo("/", true, true);
+        }
+    }
+
 }

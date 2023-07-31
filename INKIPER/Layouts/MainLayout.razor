@@ -1,5 +1,9 @@
 ﻿@using MudBlazor
+@using INKIPER.Auth
 @inherits LayoutComponentBase
+
+@inject MyAuthenticationStateProvider AuthenticationStateProvider 
+@inject NavigationManager NavigationManager
 
 <MudThemeProvider/>
 <MudDialogProvider/>
@@ -7,18 +11,21 @@
 
 <MudLayout>
     <MudAppBar Style="background-color: #44bc59" Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
         <MudText Typo="Typo.h5" Class="ml-3">InvestmentsKiper</MudText>
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+        <MudSpacer/>
+
+        <MudIconButton OnClick="@((e) => LogoutAccount(e))" Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Edge="Edge.End"/>
+
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavItems />
+        <NavItems/>
     </MudDrawer>
     <MudMainContent>
         @Body
     </MudMainContent>
 </MudLayout>
+
 @code {
     bool _drawerOpen = true;
 
@@ -26,4 +33,11 @@
     {
         _drawerOpen = !_drawerOpen;
     }
+
+
+    private async Task LogoutAccount(EventArgs e)
+    {
+        await AuthenticationStateProvider.LogoutAsync();
+    }
+
 }

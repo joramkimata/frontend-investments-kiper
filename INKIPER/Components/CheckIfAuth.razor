@@ -1,0 +1,22 @@
+@using INKIPER.Auth
+
+@inject MyAuthenticationStateProvider AuthenticationStateProvider
+
+@inject NavigationManager NavigationManager
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        try
+        {
+            NavigationManager.NavigateTo("/login", true, true);
+        }
+        catch (Exception e)
+        {
+    // ignored
+        }
+    }
+
+}
