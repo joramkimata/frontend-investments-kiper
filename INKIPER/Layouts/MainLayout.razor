@@ -1,32 +1,52 @@
-﻿@using MudBlazor
+﻿@using INKIPER.Components
+
+@using MudBlazor
 @using INKIPER.Auth
+@using INKIPER.Exts
+@using INKIPER.Services
 @inherits LayoutComponentBase
 
 @inject MyAuthenticationStateProvider AuthenticationStateProvider 
 @inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+@inject IJSRuntime js
+
+
 
 <MudThemeProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
+
 <MudLayout>
+
     <MudAppBar Style="background-color: #44bc59" Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
         <MudText Typo="Typo.h5" Class="ml-3">InvestmentsKiper</MudText>
         <MudSpacer/>
 
+        <MudIconButton Style="margin-right: 5px" OnClick="@((e) => NavigationManager.NavigateTo("/profile"))" Icon="@Icons.Material.Filled.AccountBox" Color="Color.Inherit" Edge="Edge.End"/>
+        <MudIconButton Style="margin-right: 5px" OnClick="@((e) => ChangePassword())" Icon="@Icons.Material.Filled.Lock" Color="Color.Inherit" Edge="Edge.End"/>
         <MudIconButton OnClick="@((e) => LogoutAccount(e))" Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Edge="Edge.End"/>
 
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavItems/>
     </MudDrawer>
-    <MudMainContent>
-        @Body
+    <MudMainContent >
+        <div style="padding: 10px">
+            @Body
+        </div>
     </MudMainContent>
+
 </MudLayout>
 
+
 @code {
+    
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+    
     bool _drawerOpen = true;
 
     void DrawerToggle()
@@ -34,10 +54,44 @@
         _drawerOpen = !_drawerOpen;
     }
 
+   
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await js.InitInactivityTimer(DotNetObjectReference.Create(this), 60000);
+
+            StateHasChanged();
+        }
+    }
+
 
     private async Task LogoutAccount(EventArgs e)
     {
         await AuthenticationStateProvider.LogoutAsync();
+        NavigationManager.NavigateTo("/login", true, true);
     }
+
+    private void ChangePassword()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, Position = DialogPosition.TopCenter, FullWidth = true, CloseButton = true };
+        DialogService.Show<ChangePassword>("Change Password", options);
+    }
+
+    ////////////////////////////////////////
+
+
+    [JSInvokable]
+    public async Task Logout()
+    {
+        var authState = await AuthenticationState;
+        if (authState.User.Identity!.IsAuthenticated)
+        {
+            await AuthenticationStateProvider.LogoutAsync();
+            NavigationManager.NavigateTo("/login", true, true);
+        }
+    }
+
 
 }

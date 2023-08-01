@@ -1,0 +1,13 @@
+@using MudBlazor
+<div>
+    <div style="margin: 20px; display: flex; justify-content: center; align-items: center">
+        <img style="width: 100px" src="img/logo.png"/>
+    </div>
+    <MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
+        <MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Dark" Class="mud-width-full">
+            <MudNavLink  Match="NavLinkMatch.All" Href="/" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+            <MudNavLink  Match="NavLinkMatch.All" Href="/deposits" Icon="@Icons.Material.Filled.MonetizationOn">Deposits</MudNavLink>
+             <MudNavLink  Match="NavLinkMatch.All" Href="/accounts" Icon="@Icons.Material.Filled.AccountTree">Accounts</MudNavLink>
+        </MudNavMenu>
+    </MudPaper>
+</div>

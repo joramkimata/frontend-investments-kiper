@@ -1,3 +1,4 @@
+using Blazored.SessionStorage;
 using INKIPER.Auth;
 using INKIPER.Services;
 using INKIPER.Utils;
@@ -19,6 +20,9 @@ builder.Services.AddScoped<MyAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(sp 
     => sp.GetRequiredService<MyAuthenticationStateProvider>());
 builder.Services.AddAuthorizationCore();
+
+builder.Services.AddBlazoredSessionStorage();
+
 
 var app = builder.Build();
 
