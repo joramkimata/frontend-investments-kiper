@@ -1,0 +1,27 @@
+@inject NavigationManager NavigationManager
+
+
+<div style="display: flex; height: 100vh; width: 100vw; justify-content: center; align-items: center">
+    <div>
+        <img src="img/hg.gif"/>
+    </div>
+</div>
+
+
+@code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var authState = await AuthenticationState;
+        if (authState?.User?.Identity?.IsAuthenticated != true)
+        {
+            await Task.Delay(1500);
+            NavigationManager.NavigateTo("/login", forceLoad: true);
+        }
+    }
+
+}
