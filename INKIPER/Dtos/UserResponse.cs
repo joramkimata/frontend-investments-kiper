@@ -9,6 +9,8 @@ public class UserResponse
     [JsonPropertyName("fullName")] public string FullName { get; set; }
 
     public List<String> Permissions { get; set; }
+    
+    public string AccessToken { get; set; }
 
     public ClaimsPrincipal ToClaimsPrincipal() => new(new ClaimsIdentity(new Claim[]
         {

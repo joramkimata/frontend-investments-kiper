@@ -33,6 +33,8 @@ public class AuthService
         }
 
         var tokenResponse = response.Content.ReadFromJsonAsync<TokenResponse>().Result;
+        
+        
 
         var token = new JwtSecurityToken(jwtEncodedString: tokenResponse.AccessToken);
         
@@ -55,6 +57,8 @@ public class AuthService
             }
             user!.Permissions = Permissions;
         }
+        
+        user.AccessToken = tokenResponse.AccessToken;
         
         
         return user;
