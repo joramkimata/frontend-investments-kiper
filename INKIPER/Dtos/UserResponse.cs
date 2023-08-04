@@ -7,6 +7,9 @@ namespace INKIPER.Dtos;
 public class UserResponse
 {
     [JsonPropertyName("fullName")] public string FullName { get; set; }
+    
+    [JsonPropertyName("uuid")]
+    public string Uuid { get; set; }
 
     public List<String> Permissions { get; set; }
     

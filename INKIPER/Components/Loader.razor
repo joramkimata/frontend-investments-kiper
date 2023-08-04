@@ -1,0 +1,14 @@
+@using MudBlazor
+
+@if (Loading)
+{
+    <MudProgressLinear Size="Size.Large" Style="background-color: #44bc59" Indeterminate="true"/>
+}
+
+
+@code {
+
+    [Parameter]
+    public bool Loading { get; set; }
+
+}

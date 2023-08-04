@@ -26,6 +26,7 @@ public class AuthService
     public async Task<UserResponse?> Login(LoginDto loginDto)
     {
         UserResponse? user = null;
+        string uuid = "";
         var response = await _httpClient.PostAsJsonAsync(Constants.LOGIN_URL, loginDto);
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
@@ -43,6 +44,7 @@ public class AuthService
         {
             JObject userObject = JObject.Parse(userClaim.Value);
             user = userObject.ToObject<UserResponse>();
+            uuid = user.Uuid;
         }
         
         var permissionsClaim = token.Claims.FirstOrDefault(c => c.Type == "permissions");
@@ -59,6 +61,7 @@ public class AuthService
         }
         
         user.AccessToken = tokenResponse.AccessToken;
+        user.Uuid = uuid;
         
         
         return user;

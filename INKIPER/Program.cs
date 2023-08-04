@@ -4,13 +4,17 @@ using INKIPER.GraphQL;
 using INKIPER.Services;
 using INKIPER.Utils;
 using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
+});
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Constants.BASE_URL) });
 

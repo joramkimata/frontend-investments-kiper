@@ -10,11 +10,13 @@
 
 <h1>Hello, world!</h1>
 
+<Loader />
+
 @code
 {
     protected override async Task OnInitializedAsync()
     {
-        var response = await GraphqlService.ExecGraphQLQuery<List<Role>>(GraphQLs.GET_ROLES);
-        Console.WriteLine(response);
+        // var response = await GraphqlService.ExecGraphQLQuery<List<Role>>(RolesGraphQLs.GET_ROLES);
+        // Console.WriteLine(response);
     }
 }

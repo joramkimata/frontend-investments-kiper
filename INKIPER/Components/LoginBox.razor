@@ -86,6 +86,7 @@
         {
             _loading = true;
             _success = false;
+            loginError = false;
             var response = await MyAuthenticationStateProvider.LoginAsync(_loginDto.Email, _loginDto.Password);
             _loading = false;
             _success = true;

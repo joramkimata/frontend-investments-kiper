@@ -2,7 +2,7 @@ using INKIPER.GraphQL.Types;
 
 namespace INKIPER.GraphQL.Responses;
 
-public class RolesResponse
+public class GetRolesResponse
 {
     public List<Role> GetRoles { get; set; }
 }

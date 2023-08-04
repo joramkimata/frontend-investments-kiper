@@ -1,6 +1,6 @@
 namespace INKIPER.GraphQL;
 
-public class GraphQLs
+public class RolesGraphQLs
 {
     public static String GET_ROLES = @"
         query getRoles {

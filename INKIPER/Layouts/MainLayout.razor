@@ -74,7 +74,7 @@
     {
         if (firstRender)
         {
-            await js.InitInactivityTimer(DotNetObjectReference.Create(this), 60000);
+            await js.InitInactivityTimer(DotNetObjectReference.Create(this), 300000);
 
             StateHasChanged();
         }
