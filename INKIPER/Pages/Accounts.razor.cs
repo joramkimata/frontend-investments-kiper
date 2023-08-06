@@ -34,7 +34,7 @@ public partial class Accounts
         var statePage = state.Page + 1;
         var statePageSize = state.PageSize;
 
-        var response = await GraphQlService.ExecGraphQLQuery<GetAllAccountsPaginated>(AccountsGraphQLs.GET_ALL_ACCOUNTS_PAGINATED, new
+        var response = await GraphQlService.ExecGraphQLQuery<GetMyAllAccountsPaginated>(AccountsGraphQLs.GET_MY_ALL_ACCOUNTS_PAGINATED, new
         {
             input = new PaginatedInput()
             {
@@ -43,8 +43,8 @@ public partial class Accounts
             }
         });
 
-        totalItems = response.Data.getAllAccountsPaginated.totalCount;
-        pageData = response.Data.getAllAccountsPaginated.items;
+        totalItems = response.Data.getMyAllAccountsPaginated.totalCount;
+        pageData = response.Data.getMyAllAccountsPaginated.items;
         var enumerable = pageData as Account[] ?? pageData.ToArray();
         
         

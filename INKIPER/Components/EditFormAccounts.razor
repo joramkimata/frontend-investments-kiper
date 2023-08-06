@@ -71,7 +71,6 @@
 
     protected override async Task OnParametersSetAsync()
     {
-       
         if (EditAccountsDto != null)
         {
             AccountsDto = new AccountsDto()
@@ -79,19 +78,16 @@
                 AccountName = EditAccountsDto.name,
                 AccountNumber = EditAccountsDto.accountNumber
             };
-
         }
-        
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (EditAccountsDto != null)
         {
-            _success = true; 
+            _success = true;
             StateHasChanged();
         }
-        
     }
 
 
@@ -103,19 +99,27 @@
             _loading = true;
             _success = false;
 
-            var response = await GraphqlService.ExecGraphQLMutation<CreateAccountsResponse>(AccountsGraphQLs.CREATE_ACCOUNTS, new
+            if (EditAccountsDto != null)
             {
-                input = new AccountsInput()
+            }
+            else
+            {
+                var response = await GraphqlService.ExecGraphQLMutation<CreateAccountsResponse>(AccountsGraphQLs.CREATE_ACCOUNTS, new
                 {
-                    name = AccountsDto.AccountName,
-                    accountNumber = AccountsDto.AccountNumber,
-                    description = AccountsDto.AccountDescription
-                }
-            });
+                    input = new AccountsInput()
+                    {
+                        name = AccountsDto.AccountName,
+                        accountNumber = AccountsDto.AccountNumber,
+                        description = AccountsDto.AccountDescription
+                    }
+                });
+
+                GraphqlService.Notify(response.createAccounts, () => { MudDialog.Close(); });
+            }
+
 
             _loading = false;
 
-            GraphqlService.Notify(response.createAccounts, () => { MudDialog.Close(); });
 
             OnSaveForm.Invoke();
         }

@@ -41,6 +41,7 @@
                 <NavItems/>
             </MudDrawer>
             <MudMainContent >
+                <Loader Loading="@LoggingOut" />
                 <div style="padding: 0px">
                     @Body
                 </div>
@@ -58,6 +59,8 @@
 
 
 @code {
+
+    private bool LoggingOut;
 
     [CascadingParameter]
     public Task<AuthenticationState> AuthenticationState { get; set; }
@@ -85,6 +88,8 @@
 
     private async Task LogoutAccount(EventArgs e)
     {
+        LoggingOut = true;
+        StateHasChanged();
         await AuthenticationStateProvider.LogoutAsync();
         NavigationManager.NavigateTo("/login", true, true);
     }
