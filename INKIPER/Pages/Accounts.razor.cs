@@ -1,5 +1,6 @@
 using INKIPER.Components;
 using INKIPER.GraphQL;
+using INKIPER.GraphQL.Inputs;
 using INKIPER.GraphQL.QLs.Accounts;
 using INKIPER.GraphQL.Responses.Accounts;
 using INKIPER.GraphQL.Types;
@@ -29,7 +30,7 @@ public partial class Accounts
 
         var response = await GraphQlService.ExecGraphQLQuery<GetAllAccountsPaginated>(AccountsGraphQLs.GET_ALL_ACCOUNTS_PAGINATED, new
         {
-            input = new
+            input = new PaginatedInput()
             {
                 pageNumber = statePage,
                 pageSize = statePageSize
@@ -59,6 +60,14 @@ public partial class Accounts
     private void AddAccounts()
     {
         var options = new DialogOptions { CloseOnEscapeKey = true, Position = DialogPosition.TopCenter, FullWidth = true, CloseButton = true };
-        DialogService.Show<EditFormAccounts>("Create New Accounts", options);
+        var parameters = new DialogParameters<EditFormAccounts>(); 
+        parameters.Add(x => x.OnSaveForm, HandleOnSaveForm);
+            
+        DialogService.Show<EditFormAccounts>("Create New Accounts", parameters, options);
+    }
+
+    public void HandleOnSaveForm()
+    {
+        table.ReloadServerData();
     }
 }

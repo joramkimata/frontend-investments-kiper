@@ -15,4 +15,17 @@ public class AccountsGraphQLs
         }
       }
     ";
+
+    public static String CREATE_ACCOUNTS = @"
+      mutation createAccounts($input: AccountsInput!) {
+        createAccounts(input: $input) {
+          code
+          data {
+            uuid
+          }
+          status
+          errorDescription
+        }
+      }
+    ";
 }

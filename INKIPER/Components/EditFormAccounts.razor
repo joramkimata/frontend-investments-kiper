@@ -1,5 +1,12 @@
 @using MudBlazor
 @using INKIPER.Dtos
+@using INKIPER.GraphQL
+@using INKIPER.GraphQL.Inputs.Accounts
+@using INKIPER.GraphQL.QLs.Accounts
+@using INKIPER.GraphQL.Responses.Accounts
+
+@inject GraphqlService GraphqlService
+
 <style>
     :root {
         --mud-palette-primary: #ccc;
@@ -22,7 +29,7 @@
             </MudTextField>
 
             <MudTextField
-                @bind-Value="AccountsDto.AccountName"
+                @bind-Value="AccountsDto.AccountNumber"
                 Label="Account Number"
                 Variant="Variant.Outlined"
                 Immediate="true"
@@ -43,6 +50,10 @@
 </MudDialog>
 
 @code {
+    
+    [Parameter]
+    public Action OnSaveForm { get; set; }
+    
     bool _success;
     bool _loading;
     MudForm _form = new();
@@ -54,8 +65,34 @@
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
 
+    
     private async Task OnSubmit()
     {
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            _loading = true;
+            _success = false;
+
+            var response = await GraphqlService.ExecGraphQLMutation<CreateAccountsResponse>(AccountsGraphQLs.CREATE_ACCOUNTS, new
+            {
+                input = new AccountsInput()
+                {
+                    name = AccountsDto.AccountName,
+                    accountNumber = AccountsDto.AccountNumber,
+                    description = AccountsDto.AccountDescription
+                }
+            });
+            
+            _loading = false;
+            
+            GraphqlService.Notify(response.createAccounts, () =>
+            {
+                MudDialog.Close();
+            });
+            
+            OnSaveForm.Invoke();
+        }
     }
 
 }
