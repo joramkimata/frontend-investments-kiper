@@ -4,6 +4,7 @@
 @using INKIPER.GraphQL.Inputs.Accounts
 @using INKIPER.GraphQL.QLs.Accounts
 @using INKIPER.GraphQL.Responses.Accounts
+@using INKIPER.GraphQL.Types
 
 @inject GraphqlService GraphqlService
 
@@ -44,20 +45,23 @@
                           HelperText="Enter Account Description if any!">
             </MudTextField>
 
-            <MudButton  StartIcon="@Icons.TwoTone.Save" OnClick="async () => await OnSubmit()" Disabled="@(!_success)" Style="background-color: #44bc59; height: 50px; margin-bottom: 20px; margin-top: 25px" Size="Size.Large" ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save Changes</MudButton>
+            <MudButton StartIcon="@Icons.TwoTone.Save" OnClick="async () => await OnSubmit()" Disabled="@(!_success)" Style="background-color: #44bc59; height: 50px; margin-bottom: 20px; margin-top: 25px" Size="Size.Large" ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save Changes</MudButton>
         </MudForm>
     </DialogContent>
 </MudDialog>
 
 @code {
-    
+
     [Parameter]
     public Action OnSaveForm { get; set; }
-    
+
     bool _success;
     bool _loading;
     MudForm _form = new();
     private AccountsDto AccountsDto = new();
+
+    [Parameter]
+    public Account EditAccountsDto { get; set; }
 
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
@@ -65,7 +69,32 @@
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
 
-    
+    protected override async Task OnParametersSetAsync()
+    {
+       
+        if (EditAccountsDto != null)
+        {
+            AccountsDto = new AccountsDto()
+            {
+                AccountName = EditAccountsDto.name,
+                AccountNumber = EditAccountsDto.accountNumber
+            };
+
+        }
+        
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (EditAccountsDto != null)
+        {
+            _success = true; 
+            StateHasChanged();
+        }
+        
+    }
+
+
     private async Task OnSubmit()
     {
         await _form.Validate();
@@ -83,14 +112,11 @@
                     description = AccountsDto.AccountDescription
                 }
             });
-            
+
             _loading = false;
-            
-            GraphqlService.Notify(response.createAccounts, () =>
-            {
-                MudDialog.Close();
-            });
-            
+
+            GraphqlService.Notify(response.createAccounts, () => { MudDialog.Close(); });
+
             OnSaveForm.Invoke();
         }
     }

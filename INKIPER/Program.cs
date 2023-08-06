@@ -1,4 +1,5 @@
 
+using CurrieTechnologies.Razor.SweetAlert2;
 using INKIPER.Auth;
 using INKIPER.GraphQL;
 using INKIPER.Services;
@@ -10,6 +11,8 @@ using MudBlazor.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+builder.Services.AddSweetAlert2();
 
 builder.Services.AddMudServices(config =>
 {

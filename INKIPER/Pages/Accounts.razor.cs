@@ -1,4 +1,6 @@
+using CurrieTechnologies.Razor.SweetAlert2;
 using INKIPER.Components;
+using INKIPER.Dtos;
 using INKIPER.GraphQL;
 using INKIPER.GraphQL.Inputs;
 using INKIPER.GraphQL.QLs.Accounts;
@@ -15,11 +17,15 @@ public partial class Accounts
     [Inject] private GraphqlService GraphQlService { get; set; }
     [Inject] private IDialogService DialogService { get; set; }
     
+    [Inject] private SweetAlertService Swal { get; set; }
+    
     
     // Properties
     private MudTable<Account> table;
     private IEnumerable<Account> pageData;
     private int totalItems;
+
+    private bool Executing;
 
     
     // Methods
@@ -69,5 +75,31 @@ public partial class Accounts
     public void HandleOnSaveForm()
     {
         table.ReloadServerData();
+    }
+
+    private void HandleDeleteAccountDetail(string Uuid)
+    {
+        var parameters = new DialogParameters<ConfirmDeleteBox>();
+        parameters.Add(x => x.Uuid, Uuid);
+        parameters.Add(x => x.OnDeleteFunc, HandleOnDeleteFunc);
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        DialogService.Show<ConfirmDeleteBox>("Delete", parameters, options);
+    }
+
+    private void HandleOnDeleteFunc(string uuid)
+    {
+        Executing = true;
+        StateHasChanged();
+        
+    }
+
+    private void HandleEditAccountDetail(Account account)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, Position = DialogPosition.TopCenter, FullWidth = true, CloseButton = true };
+        var parameters = new DialogParameters<EditFormAccounts>(); 
+        parameters.Add(x => x.OnSaveForm, HandleOnSaveForm);
+        parameters.Add(x => x.EditAccountsDto, account);
+            
+        DialogService.Show<EditFormAccounts>("Update Accounts", parameters, options);
     }
 }

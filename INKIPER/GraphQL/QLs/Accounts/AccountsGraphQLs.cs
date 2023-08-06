@@ -7,6 +7,7 @@ public class AccountsGraphQLs
         getAllAccountsPaginated(input: $input) {
           totalPages
           items {
+            uuid
             name
             accountNumber
             description

@@ -14,6 +14,7 @@
 <PageTitle>Manage Accounts</PageTitle>
 
 <MudAlert Severity="Severity.Normal" Icon="@Icons.Material.TwoTone.AccountTree">Manage Accounts</MudAlert>
+<Loader Loading="@Executing" />
 
 <MudTable Style="margin: 10px" @ref="table" Elevation="1" Hover="true" Dense="true" ServerData="@(new Func<TableState, Task<TableData<Account>>>(ServerReload))" Striped="true" Bordered="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Dark">
     <ToolBarContent>
@@ -40,13 +41,13 @@
         </MudTd>
         <MudTd DataLabel="Actions">
             <MudTooltip Text="View Account Details">
-                <MudIconButton @onclick="(() => HandleViewAccountDetail(context.Uuid))" Icon="@Icons.Material.Rounded.ViewAgenda" Color="Color.Info"></MudIconButton>
+                <MudIconButton @onclick="(() => HandleViewAccountDetail(context.uuid))" Icon="@Icons.Material.Rounded.ViewAgenda" Color="Color.Info"></MudIconButton>
             </MudTooltip>
             <MudTooltip Text="Edit Account Details">
-                <MudIconButton @onclick="(() => HandleViewAccountDetail(context.Uuid))" Icon="@Icons.Material.Rounded.Edit" Color="Color.Warning"></MudIconButton>
+                <MudIconButton @onclick="(() => HandleEditAccountDetail(context))" Icon="@Icons.Material.Rounded.Edit" Color="Color.Warning"></MudIconButton>
             </MudTooltip>
             <MudTooltip Text="Delete Account Details">
-                <MudIconButton @onclick="(() => HandleViewAccountDetail(context.Uuid))" Icon="@Icons.Material.Rounded.Delete" Color="Color.Error"></MudIconButton>
+                <MudIconButton @onclick="(() => HandleDeleteAccountDetail(context.uuid))" Icon="@Icons.Material.Rounded.Delete" Color="Color.Error"></MudIconButton>
             </MudTooltip>
         </MudTd>
     </RowTemplate>
