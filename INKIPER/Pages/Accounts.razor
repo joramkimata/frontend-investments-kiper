@@ -1,12 +1,56 @@
 @page "/accounts"
 @using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+@using INKIPER.GraphQL.Types
 
 @attribute [Authorize]
 
+<style>
+    :root {
+        --mud-palette-primary: #ccc;
+    }
+</style>
+
 <PageTitle>Manage Accounts</PageTitle>
 
-<h3>accounts</h3>
+<MudAlert Severity="Severity.Normal" Icon="@Icons.Material.TwoTone.AccountTree">Manage Accounts</MudAlert>
 
-@code {
-    
-}
+<MudTable Style="margin: 10px" @ref="table" Elevation="1" Hover="true" Dense="true" ServerData="@(new Func<TableState, Task<TableData<Account>>>(ServerReload))" Striped="true" Bordered="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Dark">
+    <ToolBarContent>
+        <MudTextField Immediate="true" T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+        </MudTextField>
+        <MudSpacer/>
+        <MudButton OnClick="AddAccounts" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Style="background-color: #44bc59; color: white">Add Accounts</MudButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Account Name</MudTh>
+        <MudTh>Account Number</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <NoRecordsContent>
+        <MudAlert Severity="Severity.Info">No Accounts found!</MudAlert>
+    </NoRecordsContent>
+    <RowTemplate>
+        <MudTd DataLabel="Account Name">
+            @context.name
+        </MudTd>
+        <MudTd DataLabel="Account Number">
+            @context.accountNumber
+        </MudTd>
+        <MudTd DataLabel="Actions">
+            <MudTooltip Text="View Account Details">
+                <MudIconButton @onclick="(() => HandleViewAccountDetail(context.Uuid))" Icon="@Icons.Material.Rounded.ViewAgenda" Color="Color.Info"></MudIconButton>
+            </MudTooltip>
+            <MudTooltip Text="Edit Account Details">
+                <MudIconButton @onclick="(() => HandleViewAccountDetail(context.Uuid))" Icon="@Icons.Material.Rounded.Edit" Color="Color.Warning"></MudIconButton>
+            </MudTooltip>
+            <MudTooltip Text="Delete Account Details">
+                <MudIconButton @onclick="(() => HandleViewAccountDetail(context.Uuid))" Icon="@Icons.Material.Rounded.Delete" Color="Color.Error"></MudIconButton>
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>
