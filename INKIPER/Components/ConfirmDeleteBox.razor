@@ -13,7 +13,7 @@
 
     [Parameter] public string Uuid { get; set; }
     
-    [Parameter] public Action<string> OnDeleteFunc { get; set; }
+    [Parameter] public EventCallback<string> OnDeleteFunc { get; set; }
     
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
@@ -22,6 +22,6 @@
     private void DeleteRecord()
     {
         MudDialog.Close();
-        OnDeleteFunc.Invoke(Uuid);
+        OnDeleteFunc.InvokeAsync(Uuid);
     }
 }

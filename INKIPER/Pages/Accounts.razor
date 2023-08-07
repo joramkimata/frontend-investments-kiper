@@ -27,6 +27,7 @@
     <HeaderContent>
         <MudTh>Account Name</MudTh>
         <MudTh>Account Number</MudTh>
+        <MudTh>Account Description</MudTh>
         <MudTh>Actions</MudTh>
     </HeaderContent>
     <NoRecordsContent>
@@ -39,10 +40,11 @@
         <MudTd DataLabel="Account Number">
             @context.accountNumber
         </MudTd>
+        <MudTd DataLabel=">Account Description">
+                    @context.description
+                </MudTd>
         <MudTd DataLabel="Actions">
-            <MudTooltip Text="View Account Details">
-                <MudIconButton @onclick="(() => HandleViewAccountDetail(context.uuid))" Icon="@Icons.Material.Rounded.ViewAgenda" Color="Color.Info"></MudIconButton>
-            </MudTooltip>
+           
             <MudTooltip Text="Edit Account Details">
                 <MudIconButton @onclick="(() => HandleEditAccountDetail(context))" Icon="@Icons.Material.Rounded.Edit" Color="Color.Warning"></MudIconButton>
             </MudTooltip>

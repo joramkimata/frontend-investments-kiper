@@ -57,4 +57,33 @@ public class AccountsGraphQLs
         }
       }
     ";
+
+    public static String DELETE_ACCOUNTS = @"
+      mutation deleteAccounts($uuid: String!) {
+        deleteAccounts(uuid: $uuid) {
+          code
+          data {
+            uuid
+          }
+          status
+          errorDescription
+        }
+      }
+    ";
+
+    public static String SEARCH_ACCOUNTS = @"
+      query searchAccountsPaginated($searchTerm: String!, $input: PaginatedInput!) {
+        searchAccountsPaginated(searchTerm: $searchTerm, input: $input) {
+          totalPages
+          totalCount
+          items {
+            uuid
+            name
+            deleted
+            accountNumber
+            description
+          }
+        }
+      }    
+    ";
 }

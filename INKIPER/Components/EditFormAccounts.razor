@@ -76,7 +76,8 @@
             AccountsDto = new AccountsDto()
             {
                 AccountName = EditAccountsDto.name,
-                AccountNumber = EditAccountsDto.accountNumber
+                AccountNumber = EditAccountsDto.accountNumber,
+                AccountDescription = EditAccountsDto.description
             };
         }
     }
@@ -101,6 +102,18 @@
 
             if (EditAccountsDto != null)
             {
+                var response = await GraphqlService.ExecGraphQLMutation<UpdateAccountsResponse>(AccountsGraphQLs.UPDATE_ACCOUNTS, new
+                {
+                    uuid = EditAccountsDto.uuid,
+                    input = new AccountsInput()
+                    {
+                        name = AccountsDto.AccountName,
+                        accountNumber = AccountsDto.AccountNumber,
+                        description = AccountsDto.AccountDescription
+                    }
+                });
+
+                GraphqlService.Notify(response.updateAccounts, () => { MudDialog.Close(); });
             }
             else
             {
