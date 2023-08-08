@@ -1,5 +1,6 @@
 using CurrieTechnologies.Razor.SweetAlert2;
 using INKIPER.Components;
+using INKIPER.Components.EditForms;
 using INKIPER.Dtos;
 using INKIPER.GraphQL;
 using INKIPER.GraphQL.Inputs;
@@ -21,15 +22,15 @@ public partial class Accounts
 
 
     // Properties
-    private MudTable<Account> table;
-    private IEnumerable<Account> pageData;
+    private MudTable<AccountType> table;
+    private IEnumerable<AccountType> pageData;
     private int totalItems;
     private bool Executing;
     private string searchTerm = null;
 
 
     // Methods
-    private async Task<TableData<Account>> ServerReload(TableState state)
+    private async Task<TableData<AccountType>> ServerReload(TableState state)
     {
         var statePage = state.Page + 1;
         var statePageSize = state.PageSize;
@@ -67,10 +68,10 @@ public partial class Accounts
         }
 
 
-        var enumerable = pageData as Account[] ?? pageData.ToArray();
+        var enumerable = pageData as AccountType[] ?? pageData.ToArray();
 
 
-        return new TableData<Account>() { TotalItems = totalItems, Items = enumerable };
+        return new TableData<AccountType>() { TotalItems = totalItems, Items = enumerable };
     }
 
     private void OnSearch(string text)
@@ -123,13 +124,13 @@ public partial class Accounts
         await table.ReloadServerData();
     }
 
-    private void HandleEditAccountDetail(Account account)
+    private void HandleEditAccountDetail(AccountType accountType)
     {
         var options = new DialogOptions
             { CloseOnEscapeKey = true, Position = DialogPosition.TopCenter, FullWidth = true, CloseButton = true };
         var parameters = new DialogParameters<EditFormAccounts>();
         parameters.Add(x => x.OnSaveForm, HandleOnSaveForm);
-        parameters.Add(x => x.EditAccountsDto, account);
+        parameters.Add(x => x.EditAccountsTypeDto, accountType);
 
         DialogService.Show<EditFormAccounts>("Update Accounts", parameters, options);
     }

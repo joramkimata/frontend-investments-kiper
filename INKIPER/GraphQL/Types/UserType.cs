@@ -1,6 +1,5 @@
 namespace INKIPER.GraphQL.Types;
 
-public class Role: BaseType
+public class UserType : BaseType
 {
-   
 }

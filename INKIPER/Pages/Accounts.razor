@@ -16,7 +16,7 @@
 <MudAlert Severity="Severity.Normal" Icon="@Icons.Material.TwoTone.AccountTree">Manage Accounts</MudAlert>
 <Loader Loading="@Executing" />
 
-<MudTable Style="margin: 10px" @ref="table" Elevation="1" Hover="true" Dense="true" ServerData="@(new Func<TableState, Task<TableData<Account>>>(ServerReload))" Striped="true" Bordered="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Dark">
+<MudTable Style="margin: 10px" @ref="table" Elevation="1" Hover="true" Dense="true" ServerData="@(new Func<TableState, Task<TableData<AccountType>>>(ServerReload))" Striped="true" Bordered="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Dark">
     <ToolBarContent>
         <MudTextField Immediate="true" T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">

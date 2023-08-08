@@ -1,0 +1,152 @@
+@using MudBlazor
+@using INKIPER.Dtos
+@using INKIPER.GraphQL
+@using INKIPER.GraphQL.Inputs.Deposits
+@using INKIPER.GraphQL.QLs.Accounts
+@using INKIPER.GraphQL.QLs.Deposit
+@using INKIPER.GraphQL.Responses.Accounts
+@using INKIPER.GraphQL.Responses.Deposits
+@using INKIPER.GraphQL.Types
+@inject GraphqlService GraphqlService
+<style>
+    :root {
+        --mud-palette-primary: #44bc59;
+    }
+    
+</style>
+
+<MudDialog>
+    <DialogContent>
+        <Loader Loading="@_loading"/>
+        <MudForm Model="@DepositDto" @ref="_form" @bind-IsValid="@_success">
+
+            <MudAutocomplete
+                T="DepositDto.AccountRecord"
+                Label="Select Account"
+                @bind-Value="DepositDto.Account"
+                HelperText="Select Account Name"
+                Required="true"
+                Immediate="true"
+                RequiredError="Account Name is required!"
+                ToStringFunc="@(account => account.Name)"
+                SearchFunc="@SearchAccount"
+                Clearable
+                Variant="Variant.Outlined"/>
+
+            <div style="margin-top: 20px; margin-bottom: 10px">
+                <MudTextField
+
+                    Mask="@(new PatternMask("00000000000000"))"
+                    Label="Amount"
+                    T="string"
+                    HelperText="@HelperText"
+                    Immediate="true"
+                    Required="true"
+                    RequiredError="Amount is required!"
+                    @bind-Value="DepositDto.AmountDeposited"
+                    Variant="@Variant.Outlined"
+                    OnBlur="HandleOnKeyDown"
+                    Clearable/>
+            </div>
+
+
+            <div style="margin-top: 15px">
+                <MudDatePicker
+                    Label="Deposited Date"
+                    Required="true"
+                    RequiredError="Deposited Date is required!"
+                    @bind-Date="DepositDto.DepositedDate"
+                    Variant="@Variant.Outlined"
+                    Placeholder="Select Date"/>
+            </div>
+
+            <div style="margin-top: 15px">
+                <MudTextField @bind-Value="DepositDto.Description"
+                              Label=" Description"
+                              Variant="Variant.Outlined" Lines="5"
+                              HelperText="Enter  Description if any!">
+                </MudTextField>
+            </div>
+
+
+            <MudButton StartIcon="@Icons.TwoTone.Save" OnClick="async () => await OnSubmit()" Disabled="@(!_success)" Style="background-color: #44bc59; height: 50px; margin-bottom: 20px; margin-top: 25px" Size="Size.Large" ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save Changes</MudButton>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    [Parameter]
+    public Action OnSaveForm { get; set; }
+
+    bool _success;
+    bool _loading;
+    MudForm _form = new();
+    private DepositDto DepositDto = new();
+
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    private string HelperText = "Enter Amount";
+
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+
+    List<DepositDto.AccountRecord> Accounts = new List<DepositDto.AccountRecord>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await GraphqlService.ExecGraphQLQuery<GetAMyAllAccountsResponse>(AccountsGraphQLs.GET_ALL_ACCOUNTS);
+        foreach (var account in response.Data.getAMyAllAccounts)
+        {
+            Accounts.Add(new DepositDto.AccountRecord(account.uuid, account.name));
+        }
+    }
+
+
+    private async Task OnSubmit()
+    {
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            _loading = true;
+            _success = false;
+            
+            var response = await GraphqlService.ExecGraphQLMutation<CreateDepositsResponse>(DepositGraphQLs.CREATE_DEPOSIT, new
+            {
+                input = new DepositsInput()
+                {
+                    description = DepositDto.Description,
+                    accountsUid = DepositDto.Account.Uuid,
+                    amountDeposited = float.Parse(DepositDto.AmountDeposited),
+                    depositedDate = DepositDto.DepositedDate.ToString()
+                }
+            });
+
+            GraphqlService.Notify(response.createDeposits, () => { MudDialog.Close(); });
+            
+            _loading = false;
+            
+            OnSaveForm.Invoke();
+        }
+    }
+
+    private async Task<IEnumerable<DepositDto.AccountRecord>> SearchAccount(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Accounts;
+        return Accounts.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+
+    private void HandleOnKeyDown()
+    {
+        if (DepositDto?.AmountDeposited != null)
+        {
+            HelperText = float.Parse(DepositDto.AmountDeposited).ToString("N1");
+        }
+    }
+
+}

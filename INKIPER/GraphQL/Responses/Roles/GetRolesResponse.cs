@@ -4,5 +4,5 @@ namespace INKIPER.GraphQL.Responses;
 
 public class GetRolesResponse
 {
-    public List<Role> GetRoles { get; set; }
+    public List<RoleType> GetRoles { get; set; }
 }

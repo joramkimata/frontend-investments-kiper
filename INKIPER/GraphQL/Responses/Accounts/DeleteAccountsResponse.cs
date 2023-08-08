@@ -4,5 +4,5 @@ namespace INKIPER.GraphQL.Responses.Accounts;
 
 public class DeleteAccountsResponse
 {
-    public MutationResponse<Account> deleteAccounts { get; set; }
+    public MutationResponse<AccountType> deleteAccounts { get; set; }
 }

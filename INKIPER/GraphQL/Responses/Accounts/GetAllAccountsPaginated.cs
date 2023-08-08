@@ -4,5 +4,5 @@ namespace INKIPER.GraphQL.Responses.Accounts;
 
 public class GetAllAccountsPaginated
 {
-    public PaginatedDataResponse<Account> getAllAccountsPaginated { get; set; }
+    public PaginatedDataResponse<AccountType> getAllAccountsPaginated { get; set; }
 }

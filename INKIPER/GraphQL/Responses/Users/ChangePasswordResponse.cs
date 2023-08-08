@@ -6,6 +6,6 @@ namespace INKIPER.GraphQL.Responses.Users;
 public class ChangePasswordResponse
 {
     [JsonPropertyName("changeUserPassword")]
-    public MutationResponse<User> changeUserPassword { get; set; }
+    public MutationResponse<UserType> changeUserPassword { get; set; }
 }
 

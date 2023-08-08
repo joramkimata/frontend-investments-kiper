@@ -26,7 +26,8 @@
                 Variant="Variant.Outlined"
                 HelperText="Enter Account Name"
                 Required="true"
-                RequiredError="Account Name is required!">
+                RequiredError="Account Name is required!"
+                >
             </MudTextField>
 
             <MudTextField
@@ -61,7 +62,7 @@
     private AccountsDto AccountsDto = new();
 
     [Parameter]
-    public Account EditAccountsDto { get; set; }
+    public AccountType EditAccountsTypeDto { get; set; }
 
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
@@ -71,20 +72,20 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (EditAccountsDto != null)
+        if (EditAccountsTypeDto != null)
         {
             AccountsDto = new AccountsDto()
             {
-                AccountName = EditAccountsDto.name,
-                AccountNumber = EditAccountsDto.accountNumber,
-                AccountDescription = EditAccountsDto.description
+                AccountName = EditAccountsTypeDto.name,
+                AccountNumber = EditAccountsTypeDto.accountNumber,
+                AccountDescription = EditAccountsTypeDto.description
             };
         }
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (EditAccountsDto != null)
+        if (EditAccountsTypeDto != null)
         {
             _success = true;
             StateHasChanged();
@@ -100,11 +101,11 @@
             _loading = true;
             _success = false;
 
-            if (EditAccountsDto != null)
+            if (EditAccountsTypeDto != null)
             {
                 var response = await GraphqlService.ExecGraphQLMutation<UpdateAccountsResponse>(AccountsGraphQLs.UPDATE_ACCOUNTS, new
                 {
-                    uuid = EditAccountsDto.uuid,
+                    uuid = EditAccountsTypeDto.uuid,
                     input = new AccountsInput()
                     {
                         name = AccountsDto.AccountName,

@@ -86,4 +86,16 @@ public class AccountsGraphQLs
         }
       }    
     ";
+
+    public static String GET_ALL_ACCOUNTS = @"
+      query getAMyAllAccounts {
+        getAMyAllAccounts {
+          name
+          uuid
+          accountNumber
+          deleted
+          description
+        }
+      }
+    ";
 }
