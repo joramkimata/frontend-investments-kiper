@@ -1,3 +1,4 @@
+using INKIPER.Components;
 using INKIPER.Components.EditForms;
 using INKIPER.GraphQL;
 using INKIPER.GraphQL.Inputs;
@@ -32,6 +33,29 @@ public partial class Deposits
 
         if (searchTerm != null)
         {
+            Executing = true;
+            var response = await GraphQlService.ExecGraphQLQuery<GetAllDepositsResponse>(
+                DepositGraphQLs.GET_ALL_DEPOSITS);
+
+            pageData = response.Data.getAllDeposits;
+            
+            Executing = false;
+            StateHasChanged();
+            
+            pageData = pageData.Where(deposit =>
+            {
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                    if (string.IsNullOrWhiteSpace(searchTerm))
+                        return true;
+                if (deposit.accounts.name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (deposit.amountDeposited.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (deposit.depositedDate.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            
+                return false;
+            });
         }
         else
         {
@@ -74,18 +98,58 @@ public partial class Deposits
         DialogService.Show<EditFormDeposits>("New Deposit", parameters, options);
     }
 
-    private Task HandleEditDetail(DepositType context)
+    private void HandleEditDetail(DepositType depositType)
     {
-        throw new NotImplementedException();
+        var options = new DialogOptions
+            { CloseOnEscapeKey = true, Position = DialogPosition.TopCenter, FullWidth = true, CloseButton = true };
+        var parameters = new DialogParameters<EditFormDeposits>();
+        parameters.Add(x => x.OnSaveForm, HandleOnSaveForm);
+        parameters.Add(x => x.EditDepositDto, depositType);
+
+        DialogService.Show<EditFormDeposits>("Edit Deposit", parameters, options);
     }
 
-    private Task HandleDeleteDetail(string contextUuid)
+    private void HandleDeleteDetail(string Uuid)
     {
-        throw new NotImplementedException();
+        var parameters = new DialogParameters<ConfirmDeleteBox>();
+        parameters.Add(x => x.Uuid, Uuid);
+        parameters.Add(x => x.OnDeleteFunc, EventCallback.Factory.Create<string>(this, HandleOnDeleteFunc));
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        DialogService.Show<ConfirmDeleteBox>("Delete", parameters, options);
+    }
+    
+    private async Task HandleOnDeleteFunc(string uuid)
+    {
+        Executing = true;
+        StateHasChanged();
+        var response = await GraphQlService.ExecGraphQLMutation<DeleteDepositsResponse>(
+            DepositGraphQLs.DELETE_DEPOSIT, new
+            {
+                uuid
+            });
+
+        Executing = false;
+        StateHasChanged();
+
+        GraphQlService.Notify(response.deleteDeposits, title: "Successfully deleted!");
+
+        await table.ReloadServerData();
     }
 
     private void HandleOnSaveForm()
     {
         table.ReloadServerData();
+    }
+
+    private void HandleViewDetail(DepositType depositType)
+    {
+        var options = new DialogOptions
+            { CloseOnEscapeKey = true, Position = DialogPosition.TopCenter, FullWidth = true, CloseButton = true };
+        var parameters = new DialogParameters<EditFormDeposits>();
+        parameters.Add(x => x.OnSaveForm, HandleOnSaveForm);
+        parameters.Add(x => x.EditDepositDto, depositType);
+        parameters.Add(x => x.ViewOnly, true);
+
+        DialogService.Show<EditFormDeposits>("View Deposit", parameters, options);
     }
 }

@@ -35,19 +35,19 @@
             @{
                 var mo = float.Parse(@context.amountDeposited);
             }
-            @mo.ToString("N1")
+            @mo.ToString("N0")
         </MudTd>
         <MudTd DataLabel=">Deposited Date">
             @context.depositedDate
         </MudTd>
         <MudTd DataLabel="Actions">
-            <MudTooltip Text="Edit Account Details">
-                <MudIconButton @onclick="(() => HandleEditDetail(context))" Icon="@Icons.Material.Rounded.ListAlt" Color="Color.Primary"></MudIconButton>
+            <MudTooltip Text="View Deposit Details">
+                <MudIconButton @onclick="(() => HandleViewDetail(context))" Icon="@Icons.Material.Rounded.ListAlt" Color="Color.Primary"></MudIconButton>
             </MudTooltip>
-            <MudTooltip Text="Edit Account Details">
+            <MudTooltip Text="Edit Deposit Details">
                 <MudIconButton @onclick="(() => HandleEditDetail(context))" Icon="@Icons.Material.Rounded.Edit" Color="Color.Warning"></MudIconButton>
             </MudTooltip>
-            <MudTooltip Text="Delete Account Details">
+            <MudTooltip Text="Delete Deposit Details">
                 <MudIconButton @onclick="(() => HandleDeleteDetail(context.uuid))" Icon="@Icons.Material.Rounded.Delete" Color="Color.Error"></MudIconButton>
             </MudTooltip>
         </MudTd>

@@ -15,64 +15,110 @@
     
 </style>
 
-<MudDialog>
-    <DialogContent>
-        <Loader Loading="@_loading"/>
-        <MudForm Model="@DepositDto" @ref="_form" @bind-IsValid="@_success">
+@if (ViewOnly)
+{
+    <MudDialog>
+        <DialogContent>
+            <Loader Loading="@_loading"/>
+            <MudForm Model="@DepositDto" @ref="_form" @bind-IsValid="@_success">
 
-            <MudAutocomplete
-                T="DepositDto.AccountRecord"
-                Label="Select Account"
-                @bind-Value="DepositDto.Account"
-                HelperText="Select Account Name"
-                Required="true"
-                Immediate="true"
-                RequiredError="Account Name is required!"
-                ToStringFunc="@(account => account.Name)"
-                SearchFunc="@SearchAccount"
-                Clearable
-                Variant="Variant.Outlined"/>
+                <p>Account Name:</p>
+                <h3 style="border-bottom: 1px dashed #ccc; width: 100%; display: block">
+                    @DepositDto.Account?.Name
+                </h3>
 
-            <div style="margin-top: 20px; margin-bottom: 10px">
-                <MudTextField
+                <div style="margin-top: 20px; margin-bottom: 10px">
+                    <p>Amount Deposited:</p>
+                    <h3 style="border-bottom: 1px dashed #ccc; width: 100%; display: block">
+                        @{
+                            string? money = "";
+                            if (!string.IsNullOrEmpty(DepositDto.AmountDeposited))
+                                money = float.Parse(DepositDto.AmountDeposited).ToString("N0");
+                        }
+                        @money
+                    </h3>
+                </div>
 
-                    Mask="@(new PatternMask("00000000000000"))"
-                    Label="Amount"
-                    T="string"
-                    HelperText="@HelperText"
+
+                <div style="margin-top: 15px">
+                    <p> Deposited Date:</p>
+                    <h3 style="border-bottom: 1px dashed #ccc; width: 100%; display: block">
+                        @DepositDto.DepositedDate
+                    </h3>
+                </div>
+
+                <div style="margin-top: 15px; margin-bottom: 26px">
+                    <p> Description:</p>
+                    <h3 style="border-bottom: 1px dashed #ccc; width: 100%; display: block">
+                        @DepositDto.Description
+                    </h3>
+                </div>
+
+            </MudForm>
+        </DialogContent>
+    </MudDialog>
+}
+else
+{
+    <MudDialog>
+        <DialogContent>
+            <Loader Loading="@_loading"/>
+            <MudForm Model="@DepositDto" @ref="_form" @bind-IsValid="@_success">
+
+                <MudAutocomplete
+                    T="DepositDto.AccountRecord"
+                    Label="Select Account"
+                    @bind-Value="DepositDto.Account"
+                    HelperText="Select Account Name"
+                    Required="true"
                     Immediate="true"
-                    Required="true"
-                    RequiredError="Amount is required!"
-                    @bind-Value="DepositDto.AmountDeposited"
-                    Variant="@Variant.Outlined"
-                    OnBlur="HandleOnKeyDown"
-                    Clearable/>
-            </div>
+                    RequiredError="Account Name is required!"
+                    ToStringFunc="@(account => account.Name)"
+                    SearchFunc="@SearchAccount"
+                    Clearable
+                    Variant="Variant.Outlined"/>
+
+                <div style="margin-top: 20px; margin-bottom: 10px">
+                    <MudTextField
+
+                        Mask="@(new PatternMask("00000000000000"))"
+                        Label="Amount"
+                        T="string"
+                        HelperText="@HelperText"
+                        Immediate="true"
+                        Required="true"
+                        RequiredError="Amount is required!"
+                        @bind-Value="DepositDto.AmountDeposited"
+                        Variant="@Variant.Outlined"
+                        OnBlur="HandleOnKeyDown"
+                        Clearable/>
+                </div>
 
 
-            <div style="margin-top: 15px">
-                <MudDatePicker
-                    Label="Deposited Date"
-                    Required="true"
-                    RequiredError="Deposited Date is required!"
-                    @bind-Date="DepositDto.DepositedDate"
-                    Variant="@Variant.Outlined"
-                    Placeholder="Select Date"/>
-            </div>
+                <div style="margin-top: 15px">
+                    <MudDatePicker
+                        Label="Deposited Date"
+                        Required="true"
+                        RequiredError="Deposited Date is required!"
+                        @bind-Date="DepositDto.DepositedDate"
+                        Variant="@Variant.Outlined"
+                        Placeholder="Select Date"/>
+                </div>
 
-            <div style="margin-top: 15px">
-                <MudTextField @bind-Value="DepositDto.Description"
-                              Label=" Description"
-                              Variant="Variant.Outlined" Lines="5"
-                              HelperText="Enter  Description if any!">
-                </MudTextField>
-            </div>
+                <div style="margin-top: 15px">
+                    <MudTextField @bind-Value="DepositDto.Description"
+                                  Label=" Description"
+                                  Variant="Variant.Outlined" Lines="5"
+                                  HelperText="Enter  Description if any!">
+                    </MudTextField>
+                </div>
 
 
-            <MudButton StartIcon="@Icons.TwoTone.Save" OnClick="async () => await OnSubmit()" Disabled="@(!_success)" Style="background-color: #44bc59; height: 50px; margin-bottom: 20px; margin-top: 25px" Size="Size.Large" ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save Changes</MudButton>
-        </MudForm>
-    </DialogContent>
-</MudDialog>
+                <MudButton StartIcon="@Icons.TwoTone.Save" OnClick="async () => await OnSubmit()" Disabled="@(!_success)" Style="background-color: #44bc59; height: 50px; margin-bottom: 20px; margin-top: 25px" Size="Size.Large" ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save Changes</MudButton>
+            </MudForm>
+        </DialogContent>
+    </MudDialog>
+}
 
 @code {
 
@@ -83,6 +129,12 @@
     bool _loading;
     MudForm _form = new();
     private DepositDto DepositDto = new();
+
+    [Parameter]
+    public DepositType EditDepositDto { get; set; }
+
+    [Parameter]
+    public bool ViewOnly { get; set; }
 
 
     [CascadingParameter]
@@ -105,6 +157,20 @@
         }
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        if (EditDepositDto != null)
+        {
+            DepositDto = new DepositDto()
+            {
+                Description = EditDepositDto.description,
+                Account = new DepositDto.AccountRecord(EditDepositDto.accounts.uuid, EditDepositDto.accounts.name),
+                AmountDeposited = EditDepositDto.amountDeposited,
+                DepositedDate = DateTime.Parse(EditDepositDto.depositedDate)
+            };
+        }
+    }
+
 
     private async Task OnSubmit()
     {
@@ -113,22 +179,43 @@
         {
             _loading = true;
             _success = false;
-            
-            var response = await GraphqlService.ExecGraphQLMutation<CreateDepositsResponse>(DepositGraphQLs.CREATE_DEPOSIT, new
-            {
-                input = new DepositsInput()
-                {
-                    description = DepositDto.Description,
-                    accountsUid = DepositDto.Account.Uuid,
-                    amountDeposited = float.Parse(DepositDto.AmountDeposited),
-                    depositedDate = DepositDto.DepositedDate.ToString()
-                }
-            });
 
-            GraphqlService.Notify(response.createDeposits, () => { MudDialog.Close(); });
-            
+
+            if (EditDepositDto != null)
+            {
+                var response = await GraphqlService.ExecGraphQLMutation<UpdateDepositsResponse>(DepositGraphQLs.UPDATE_DEPOSIT, new
+                {
+                    uuid = EditDepositDto.uuid,
+                    input = new DepositsInput()
+                    {
+                        description = DepositDto.Description,
+                        accountsUid = DepositDto.Account.Uuid,
+                        amountDeposited = float.Parse(DepositDto.AmountDeposited),
+                        depositedDate = DepositDto.DepositedDate.ToString()
+                    }
+                });
+
+                GraphqlService.Notify(response.updateDeposits, () => { MudDialog.Close(); });
+            }
+            else
+            {
+                var response = await GraphqlService.ExecGraphQLMutation<CreateDepositsResponse>(DepositGraphQLs.CREATE_DEPOSIT, new
+                {
+                    input = new DepositsInput()
+                    {
+                        description = DepositDto.Description,
+                        accountsUid = DepositDto.Account.Uuid,
+                        amountDeposited = float.Parse(DepositDto.AmountDeposited),
+                        depositedDate = DepositDto.DepositedDate.ToString()
+                    }
+                });
+
+                GraphqlService.Notify(response.createDeposits, () => { MudDialog.Close(); });
+            }
+
+
             _loading = false;
-            
+
             OnSaveForm.Invoke();
         }
     }
@@ -137,7 +224,12 @@
     {
         if (string.IsNullOrEmpty(value))
             return Accounts;
-        return Accounts.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+
+        IEnumerable<DepositDto.AccountRecord> records = Accounts.Where(x => !x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+
+        DepositDto.AccountRecord[] accountRecords = records.ToArray();
+
+        return records;
     }
 
 
