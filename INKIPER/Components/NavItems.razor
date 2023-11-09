@@ -5,9 +5,18 @@
     </div>
     <MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
         <MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Dark" Class="mud-width-full">
-            <MudNavLink  Match="NavLinkMatch.All" Href="/" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
-            <MudNavLink  Match="NavLinkMatch.All" Href="/deposits" Icon="@Icons.Material.Filled.MonetizationOn">Deposits</MudNavLink>
-             <MudNavLink  Match="NavLinkMatch.All" Href="/accounts" Icon="@Icons.Material.Filled.AccountTree">Accounts</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="/" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="/deposits" Icon="@Icons.Material.Filled.MonetizationOn">Deposits</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="/withdraws" Icon="@Icons.Material.Filled.MoneyOff">Withdraws</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="/profits" Icon="@Icons.Material.Filled.ShoppingBag">Profits</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="/profits" Icon="@Icons.Material.Filled.BatteryAlert">Expenditure</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="/accounts" Icon="@Icons.Material.Filled.AccountTree">Accounts</MudNavLink>
+            <MudNavGroup ExpandIcon="@Icons.Material.Filled.ArrowDownward" Expanded="false" Title="User Management" Icon="@Icons.Material.Filled.SupervisedUserCircle">
+                <MudNavLink Match="NavLinkMatch.Prefix" Href="/roles" Icon="@Icons.Material.Filled.Key">Roles</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.Prefix" Href="/users" Icon="@Icons.Material.Filled.AccountCircle">Users</MudNavLink>
+            </MudNavGroup>
+            <MudNavLink Match="NavLinkMatch.All" Href="/accounts" Icon="@Icons.Material.Filled.BarChart">Reports</MudNavLink>
+
         </MudNavMenu>
     </MudPaper>
 </div>

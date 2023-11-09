@@ -16,7 +16,7 @@
     <MudPaper Elevation="9" Class="login-box-inner-p">
         @if (_loading)
         {
-            <MudProgressLinear Size="Size.Large" Style="background-color: #f6b26d" Indeterminate="true"/>
+            <MudProgressLinear Size="Size.Large" Style="background-color: #44bc59" Indeterminate="true"/>
         }
 
         @if (loginError)
@@ -28,7 +28,7 @@
         <MudCardContent>
             <div class="logo-inner">
                 <img src="img/logo.png"/>
-                <h2>InvestmentsKiper - LOGIN</h2>
+                <h2>UTT AMIS - InvestmentsKiper - LOGIN</h2>
             </div>
             <MudTextField Immediate="true" @bind-Value="_loginDto.Email" Required="true" RequiredError="Username is required" Style="margin-bottom: 10px" T="string" Label="Username" Variant="Variant.Outlined"></MudTextField>
 

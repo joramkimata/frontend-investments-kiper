@@ -3,20 +3,187 @@
 @using INKIPER.GraphQL
 @using INKIPER.GraphQL.Responses
 @using INKIPER.GraphQL.Types
+@using MudBlazor
 @inject GraphqlService GraphqlService
 @attribute [Authorize]
 
 <PageTitle>Dashboard</PageTitle>
 
-<h1>Hello, world!</h1>
+<div style="margin: 20px">
+    <MudPaper Elevation="3" Style="display: flex; padding: 10px; justify-content: start; align-items: center; width: 100%">
+        <MudIcon Icon="@Icons.Material.Filled.Dashboard"></MudIcon> <MudText Typo="Typo.h6"> Dashboard</MudText>
+    </MudPaper>
+    <MudGrid Style="margin-top: 10px">
 
-<Loader />
+        <MudItem md="12" xs="12">
+            <MudAlert Severity="Severity.Info">
+                This Month Summary Report: (
+                @{
+                    var currentDate = "Mwezi: " + DateTime.Now.Month + "/" + DateTime.Now.Year;
+                }
+                @currentDate
+                )
+            </MudAlert>
+        </MudItem>
+
+        <MudItem md="4" xs="12">
+            <MudPaper Elevation="5" Style="">
+                @if (Loading)
+                {
+                    <div style="padding: 10px">
+                        <Loader Lines="8"/>
+                    </div>
+                }
+                else
+                {
+                    <div @onclick="() => { }" style="display: flex; padding: 20px; justify-content: space-between;cursor: pointer">
+                        <div>
+                            <MudIcon Icon="@Icons.Material.TwoTone.MonetizationOn" Style="font-size: 8rem;"/>
+                        </div>
+                        <div style="display: flex; flex-direction: column">
+                            <MudText Typo="Typo.h6">Total Amount Invested</MudText>
+                            <MudText Typo="Typo.h3"></MudText>
+                        </div>
+                    </div>
+                }
+
+            </MudPaper>
+        </MudItem>
+        <MudItem md="4" xs="12">
+            <MudPaper Elevation="5" Style="">
+                @if (Loading)
+                {
+                    <div style="padding: 10px">
+                        <Loader Lines="8"/>
+                    </div>
+                }
+                else
+                {
+                    <div @onclick="() => { }" style="display: flex; padding: 20px; justify-content: space-between;cursor: pointer">
+                        <div>
+                            <MudIcon Icon="@Icons.Material.TwoTone.MoneyOff" Style="font-size: 8rem;"/>
+                        </div>
+                        <div style="display: flex; flex-direction: column">
+                            <MudText Typo="Typo.h6">Total Amount Withdrew</MudText>
+                            <MudText Typo="Typo.h3"></MudText>
+                        </div>
+                    </div>
+                }
+
+            </MudPaper>
+        </MudItem>
+        <MudItem md="4" xs="12">
+            <MudPaper Elevation="5">
+                @if (Loading)
+                {
+                    <div style="padding: 10px">
+                        <Loader Lines="8"/>
+                    </div>
+                }
+                else
+                {
+                    <div @onclick="() => { }" style="display: flex; padding: 20px; justify-content: space-between;cursor: pointer">
+                        <div>
+                            <MudIcon Icon="@Icons.Material.TwoTone.AccountTree" Style="font-size: 8rem;"/>
+                        </div>
+                        <div style="display: flex; flex-direction: column">
+                            <MudText Typo="Typo.h6">Accounts</MudText>
+                            <MudText Typo="Typo.h3"></MudText>
+                        </div>
+                    </div>
+                }
+            </MudPaper>
+        </MudItem>
+
+    </MudGrid>
+    <MudGrid Style="margin-top: 10px">
+
+        <MudItem md="12" xs="12">
+            <MudAlert Icon="@Icons.Material.Filled.Info" Severity="Severity.Warning">
+                This Month Profits Summary Report: (
+                @{
+                    var currentDate = "Mwezi: " + DateTime.Now.Month + "/" + DateTime.Now.Year;
+                }
+                @currentDate
+                )
+            </MudAlert>
+        </MudItem>
+
+        <MudItem xs="8">
+
+
+            <MudPaper Elevation="5">
+                <div style="padding: 20px;">
+                    @if (Loading)
+                    {
+                        <Loader Lines="10"/>
+                    }
+                    else
+                    {
+                        <div>
+                            <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="IndexNmbr" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+                        </div>
+                    }
+                </div>
+            </MudPaper>
+
+
+        </MudItem>
+
+        <MudItem xs="4">
+
+
+            <MudPaper Elevation="5">
+                <div style="padding: 20px;">
+                    @if (Loading)
+                    {
+                        <Loader Lines="10"/>
+                    }
+                    else
+                    {
+                        <div>
+                            <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="IndexNmbr" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+                        </div>
+                    }
+                </div>
+            </MudPaper>
+
+
+        </MudItem>
+
+    </MudGrid>
+</div>
+
 
 @code
 {
-    protected override async Task OnInitializedAsync()
+    bool Loading;
+
+    private int IndexNmbr = -1; //default value cannot be 0 -> first selectedindex is 0.
+
+    public List<ChartSeries> Series = new List<ChartSeries>()
     {
-        // var response = await GraphqlService.ExecGraphQLQuery<List<Role>>(RolesGraphQLs.GET_ROLES);
-        // Console.WriteLine(response);
+        new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+    };
+
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    Random random = new Random();
+
+    public void RandomizeData()
+    {
+        var new_series = new List<ChartSeries>()
+        {
+            new ChartSeries() { Name = "Series 1", Data = new double[9] },
+            new ChartSeries() { Name = "Series 2", Data = new double[9] },
+        };
+        for (int i = 0; i < 9; i++)
+        {
+            new_series[0].Data[i] = random.NextDouble() * 100;
+            new_series[1].Data[i] = random.NextDouble() * 100;
+        }
+        Series = new_series;
+        StateHasChanged();
     }
 }
