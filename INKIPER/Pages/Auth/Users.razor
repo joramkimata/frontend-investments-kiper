@@ -1,0 +1,91 @@
+@page "/users"
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+@using INKIPER.GraphQL.Types
+
+@attribute [Authorize]
+
+<PageTitle>Manage Users</PageTitle>
+
+<style>
+    :root {
+        --mud-palette-primary: #4d5d7a;
+    }
+</style>
+
+<MudAlert Severity="Severity.Normal" Icon="@Icons.Material.TwoTone.AccountCircle">Manage Users</MudAlert>
+<Loader Loading="@Executing"/>
+
+<MudTable Style="margin: 10px" @ref="table" Elevation="1" Hover="true" ServerData="@(new Func<TableState, Task<TableData<UserType>>>(ServerReload))" Striped="true" Bordered="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Dark">
+    <ToolBarContent>
+        <MudTextField Immediate="true" T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+        </MudTextField>
+        <MudSpacer/>
+
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Full Name</MudTh>
+        <MudTh>Phone Number</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>User Type</MudTh>
+        <MudTh>Joined</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <NoRecordsContent>
+        <MudAlert Severity="Severity.Info">No Users found!</MudAlert>
+    </NoRecordsContent>
+    <RowTemplate>
+        <MudTd DataLabel="Full Name">
+            @context.fullName
+        </MudTd>
+        <MudTd DataLabel="Phone Number">
+            @context.username
+        </MudTd>
+        <MudTd DataLabel="Email">
+            @context.email
+        </MudTd>
+        <MudTd DataLabel="User Type">
+            <MudChip Size="Size.Small">@context.userType</MudChip>
+        </MudTd>
+        <MudTd DataLabel="Joined">
+            @context.TimeAgo
+        </MudTd>
+
+        <MudTd DataLabel="Actions">
+
+            <MudTooltip Text="Edit User Details">
+                <MudIconButton @onclick="(() => HandleEditDetail(context))" Icon="@Icons.Material.Rounded.Edit" Color="Color.Warning"></MudIconButton>
+            </MudTooltip>
+
+            <MudTooltip Text="Delete User Details">
+                <MudIconButton @onclick="(() => HandleDeleteDetail(context.uuid))" Icon="@Icons.Material.Rounded.Delete" Color="Color.Error"></MudIconButton>
+            </MudTooltip>
+
+            @if (context.active)
+            {
+                <MudTooltip Text="Block User">
+                    <MudIconButton @onclick="(() => HandleBlockUser(context.uuid))" Icon="@Icons.Material.Rounded.LockOpen" Color="Color.Primary"></MudIconButton>
+                </MudTooltip>
+            }
+            else
+            {
+                <MudTooltip Text="Activate User">
+                    <MudIconButton @onclick="(() => HandleActivateUser(context.uuid))" Icon="@Icons.Material.Rounded.Lock" Color="Color.Success"></MudIconButton>
+                </MudTooltip>
+            }
+
+            <MudTooltip Text="View User Info">
+                <MudIconButton @onclick="(() => HandleUserDetail(context.uuid))" Icon="@Icons.Material.Rounded.RemoveRedEye" Color="Color.Info"></MudIconButton>
+            </MudTooltip>
+
+            <MudTooltip Text="Change User Password">
+                <MudIconButton @onclick="(() => HandleChangeUserPassword(context.uuid))" Icon="@Icons.Material.Rounded.Key" Color="Color.Error"></MudIconButton>
+            </MudTooltip>
+
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>

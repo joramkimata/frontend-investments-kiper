@@ -6,4 +6,4 @@ services:
     ports:
       - 9091:80
     environment:
-      - BACKEND_URL=http://172.20.10.2:3331
+      - BACKEND_URL=http://66.29.149.172:3331

@@ -1,0 +1,60 @@
+@page "/roles"
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+@using INKIPER.GraphQL.Types
+
+
+@attribute [Authorize]
+
+<PageTitle>Manage Roles</PageTitle>
+
+<style>
+    :root {
+        --mud-palette-primary: #4d5d7a;
+    }
+</style>
+
+<MudAlert Severity="Severity.Normal" Icon="@Icons.Material.TwoTone.Key">Manage Roles</MudAlert>
+<Loader Loading="@Executing"/>
+
+<MudTable Style="margin: 10px" @ref="table" Elevation="1" Hover="true" Dense="true" ServerData="@(new Func<TableState, Task<TableData<RoleType>>>(ServerReload))" Striped="true" Bordered="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Dark">
+    <ToolBarContent>
+        <MudTextField Immediate="true" T="string" ValueChanged="@(s => OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+        </MudTextField>
+        <MudSpacer/>
+        <MudButton OnClick="AddRole" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Style="background-color: #44bc59; color: white">Add Role</MudButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Display Name</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <NoRecordsContent>
+        <MudAlert Severity="Severity.Info">No Role found!</MudAlert>
+    </NoRecordsContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">
+            @context.name
+        </MudTd>
+        <MudTd DataLabel="Display Name">
+            @context.displayName
+        </MudTd>
+
+        <MudTd DataLabel="Actions">
+
+            <MudTooltip Text="Edit Role Details">
+                <MudIconButton @onclick="(() => HandleEditDetail(context))" Icon="@Icons.Material.Rounded.Edit" Color="Color.Warning"></MudIconButton>
+            </MudTooltip>
+            <MudTooltip Text="Edit Role Details">
+                <MudIconButton @onclick="(() => HandleViewDetail(context.uuid))" Icon="@Icons.Material.Rounded.RemoveRedEye" Color="Color.Success"></MudIconButton>
+            </MudTooltip>
+            <MudTooltip Text="Delete Role Details">
+                <MudIconButton @onclick="(() => HandleDeleteDetail(context.uuid))" Icon="@Icons.Material.Rounded.Delete" Color="Color.Error"></MudIconButton>
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>

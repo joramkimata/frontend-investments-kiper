@@ -1,0 +1,95 @@
+@using INKIPER.GraphQL.Types
+@using MudBlazor
+@using INKIPER.GraphQL.Responses.Users
+@using INKIPER.GraphQL.QLs.Users
+@using INKIPER.GraphQL
+@using INKIPER.GraphQL.Inputs.Users
+
+
+@inject GraphqlService GraphqlService
+
+
+<style>
+    :root {
+        --mud-palette-primary: #4d5d7a;
+    }
+</style>
+
+<MudDialog>
+    <DialogContent>
+        <Loader Loading="@_loading"/>
+        @if (Roles.Count > 0)
+        {
+            <MudGrid>
+                @foreach (var role in Roles)
+                {
+                    <MudItem xs="3">
+                        <div style="padding: 10px">
+                            <MudCheckBox @bind-Checked="@role.belongsToUser" Label="@role.name" Color="Color.Primary"></MudCheckBox>
+                        </div>
+                    </MudItem>
+                }
+            </MudGrid>
+            <MudDivider/>
+            <div style="display: flex; flex-direction: row-reverse">
+                <MudButton OnClick="AssignRoles" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Style="background-color: #4d5d7a; color: white; margin-top: 10px">Save Changes</MudButton>
+            </div>
+        }
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+
+    [Parameter]
+    public EventCallback OnSaveForm { get; set; }
+
+    [Parameter]
+    public UserType? UserType { get; set; }
+
+    [Parameter]
+    public List<RoleType> Roles { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+
+    bool _loading;
+
+    private async Task AssignRoles()
+    {
+        var roloUuids = Roles.Where(x => x.belongsToUser).Select(x => x.uuid).ToList();
+
+        _loading = true;
+
+        var response = await GraphqlService.ExecGraphQLMutation<AssignRolesResponse>(UsersGraphQLs.ASSIGN_ROLES, new
+        {
+            assignRolesInput = new AssignRolesInput()
+            {
+                userUUID = UserType.uuid,
+                roleUUIDs = roloUuids
+            }
+        });
+
+        GraphqlService.Notify(response.assignRoles, () => { MudDialog.Close(); });
+
+
+        _loading = false;
+        await OnSaveForm.InvokeAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        Roles.Select(x =>
+        {
+            if (UserType.roles.Select(x => x.uuid).ToList().Contains(x.uuid))
+            {
+                x.belongsToUser = true;
+            }
+            return x;
+        }).ToList();
+    }
+
+}

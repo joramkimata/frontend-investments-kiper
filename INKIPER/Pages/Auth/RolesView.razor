@@ -1,0 +1,43 @@
+@page "/roles/{uuid}/view"
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+
+@attribute [Authorize]
+
+<PageTitle>Role Details</PageTitle>
+
+<style>
+    :root {
+        --mud-palette-primary: #4d5d7a;
+    }
+</style>
+<Loader Loading="@Executing"/>
+@if (mRole != null)
+{
+    <MudAlert Style="" Severity="Severity.Normal" Icon="@Icons.Material.TwoTone.Key">Role Name: @mRole.displayName</MudAlert>
+    <div style="margin: 20px">
+        <MudPaper Elevation="2">
+            <MudGrid>
+                <MudItem xs="6">
+                    <div style="padding: 10px">
+                        <h3>Name</h3>
+                        <p>@mRole.name</p>
+                    </div>
+                </MudItem>
+                <MudItem xs="6">
+                    <div style="padding: 10px">
+                        <h3>Display Name</h3>
+                        <p>@mRole.displayName</p>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </div>
+}
+
+@if (GroupPermissionsList != null)
+{
+    <MudAlert Style="" Severity="Severity.Normal" Icon="@Icons.Material.TwoTone.Key">PERMISSION LIST FOR @mRole.displayName.ToUpper()</MudAlert>
+    <PermissionsManager OnAssignPermissions="HandleAssignPermissions" GroupPermissionsList="GroupPermissionsList"/>
+}
+

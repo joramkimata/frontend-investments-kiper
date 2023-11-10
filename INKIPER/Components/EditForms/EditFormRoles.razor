@@ -1,0 +1,131 @@
+@using MudBlazor
+@using INKIPER.GraphQL.Types
+@using INKIPER.GraphQL
+@using INKIPER.Dtos
+@using INKIPER.GraphQL.Inputs.Roles
+@using INKIPER.GraphQL.QLs.Roles
+@using INKIPER.GraphQL.Responses.Roles
+
+@inject GraphqlService GraphqlService
+
+<style>
+    :root {
+        --mud-palette-primary: #4d5d7a;
+    }
+</style>
+
+<MudDialog>
+    <DialogContent>
+        <Loader Loading="@_loading"/>
+        <MudForm Model="@RoleDto" @ref="_form" @bind-IsValid="@_success">
+
+            <MudTextField
+                @bind-Value="RoleDto.Name"
+                Label="Role Name"
+                Immediate="true"
+                Variant="Variant.Outlined"
+                HelperText="Enter Role Name"
+                Required="true"
+                RequiredError="Role Name is required!">
+            </MudTextField>
+
+            <MudTextField
+                @bind-Value="RoleDto.DisplayName"
+                Label="Role Display Name"
+                Immediate="true"
+                Variant="Variant.Outlined"
+                HelperText="Enter Display Name"
+                Required="true"
+                RequiredError="Display Name is required!">
+            </MudTextField>
+
+
+            <MudButton StartIcon="@Icons.TwoTone.Save" OnClick="async () => await OnSubmit()" Disabled="@(!_success)" Style="background-color: #4d5d7a; height: 50px; margin-bottom: 20px; margin-top: 25px" Size="Size.Large" ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Save Changes</MudButton>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    bool _success;
+    bool _loading;
+    MudForm _form = new();
+    private RoleDto RoleDto = new();
+
+    [Parameter]
+    public RoleType EditRoleTypeDto { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+
+    [Parameter]
+    public Action OnSaveForm { get; set; }
+
+    private async Task OnSubmit()
+    {
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            _loading = true;
+            _success = false;
+
+            if (EditRoleTypeDto != null)
+            {
+                var response = await GraphqlService.ExecGraphQLMutation<UpdateRoleResponse>(RolesGraphQLs.UPDATE_ROLE, new
+                {
+                    uuid = EditRoleTypeDto.uuid,
+                    input = new RoleInput()
+                    {
+                        name = RoleDto.Name,
+                        displayName = RoleDto.DisplayName
+                    }
+                });
+
+                GraphqlService.Notify(response.updateRole, () => { MudDialog.Close(); });
+            }
+            else
+            {
+                var response = await GraphqlService.ExecGraphQLMutation<CreateRoleResponse>(RolesGraphQLs.CREATE_ROLE, new
+                {
+                    input = new RoleInput()
+                    {
+                        name = RoleDto.Name,
+                        displayName = RoleDto.DisplayName
+                    }
+                });
+
+                GraphqlService.Notify(response.createRole, () => { MudDialog.Close(); });
+            }
+
+
+            _loading = false;
+
+            OnSaveForm.Invoke();
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (EditRoleTypeDto != null)
+        {
+            _success = true;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (EditRoleTypeDto != null)
+        {
+            RoleDto = new RoleDto()
+            {
+                Name = EditRoleTypeDto.name,
+                DisplayName = EditRoleTypeDto.displayName
+            };
+        }
+    }
+
+
+}

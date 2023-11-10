@@ -1,0 +1,95 @@
+@page "/users/{uuid}/view"
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+
+@attribute [Authorize]
+
+<PageTitle>User Details</PageTitle>
+
+<style>
+    :root {
+        --mud-palette-primary: #4d5d7a;
+    }
+</style>
+<Loader Loading="@Executing"/>
+
+@if (mUser != null)
+{
+    <div style="margin: 20px">
+        <MudPaper Elevation="5">
+            <div style="display: flex; justify-content: space-between; padding: 20px;">
+                <div style="display: flex; justify-items: center; align-items: center; gap: 2px">
+                    <MudIcon Icon="@Icons.Material.Filled.AccountCircle"></MudIcon>
+                    <h2>
+                        @mUser.fullName
+                    </h2>
+                </div>
+                <MudIconButton OnClick="GoBack" Icon="@Icons.Material.Filled.ArrowBack"></MudIconButton>
+            </div>
+        </MudPaper>
+    </div>
+    <MudDivider/>
+    <div style="margin: 20px">
+        <MudPaper Elevation="1">
+            <MudGrid>
+                <MudItem xs="6">
+                    <div style="padding: 10px">
+                        <h3>Full Name</h3>
+                        <p>@mUser.fullName</p>
+                    </div>
+                </MudItem>
+                <MudItem xs="6">
+                    <div style="padding: 10px">
+                        <h3>Email</h3>
+                        <p>@mUser.email</p>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </div>
+    <MudDivider/>
+    <div style="margin: 20px">
+        <MudPaper Elevation="5">
+            <div style="display: flex; justify-content: space-between; padding: 10px;">
+                <div style="display: flex; justify-items: center; align-items: center; gap: 2px">
+                    <MudIcon Icon="@Icons.Material.Filled.Key"></MudIcon>
+                    <h2>
+                        (@mUser.roles.Count)
+                        ROLES
+                    </h2>
+                </div>
+                <MudButton OnClick="AssignRoles" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.AddBox" Style="background-color: #4d5d7a; color: white">Add Roles</MudButton>
+            </div>
+        </MudPaper>
+    </div>
+    <MudDivider/>
+    <div style="margin: 20px">
+        <MudExpansionPanels MultiExpansion="true">
+
+            @foreach (var role in mUser.roles)
+            {
+                <MudExpansionPanel IsExpanded="true">
+                    <TitleContent>
+                        <div class="d-flex">
+                            <MudText>@role.displayName</MudText>
+                        </div>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudGrid>
+                            @foreach (var permission in role.permissions)
+                            {
+                                <MudItem xs="3">
+                                    <div style="padding: 10px">
+                                        <MudCheckBox Disabled="true" Checked="true" Label="@permission.name" Color="Color.Primary"></MudCheckBox>
+                                    </div>
+                                </MudItem>
+                            }
+                        </MudGrid>
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+
+        </MudExpansionPanels>
+    </div>
+
+}

@@ -1,0 +1,38 @@
+@using MudBlazor
+<MudDialog>
+    <DialogContent>
+        <MudText>@Text</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="DeleteRecord" Color="Color.Error" Variant="Variant.Filled">@ConfirmBtnText</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string Uuid { get; set; }
+    
+    [Parameter] public string Text { get; set; }
+    
+    [Parameter] public EventCallback<string> OnConfirm { get; set; }
+    
+    [Parameter] public EventCallback<string> OnCancel { get; set; }
+    
+    [Parameter] public string ConfirmBtnText { get; set; }
+    
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    void Cancel()
+    {
+        MudDialog.Cancel();
+        OnCancel.InvokeAsync(Uuid);
+    }
+
+    private void DeleteRecord()
+    {
+        MudDialog.Close();
+        OnConfirm.InvokeAsync(Uuid);
+    }
+}

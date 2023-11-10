@@ -1,10 +1,8 @@
-using System.Text.Json.Serialization;
 using INKIPER.GraphQL.Types;
 
 namespace INKIPER.GraphQL.Responses.Users;
 
-public class ChangePasswordResponse
+public class ChangeUserPasswordResponse
 {
-    [JsonPropertyName("changeUserPassword")]
     public MutationResponse<UserType> changeUserPassword { get; set; }
 }

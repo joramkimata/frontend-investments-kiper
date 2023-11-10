@@ -1,6 +1,6 @@
 using INKIPER.GraphQL.Types;
 
-namespace INKIPER.GraphQL.Responses;
+namespace INKIPER.GraphQL.Responses.Roles;
 
 public class GetRolesResponse
 {
