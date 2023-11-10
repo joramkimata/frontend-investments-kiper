@@ -90,25 +90,25 @@ else
                         RequiredError="Amount is required!"
                         @bind-Value="DepositDto.AmountDeposited"
                         Variant="@Variant.Outlined"
-                        OnBlur="HandleOnKeyDown"
+                        @onblur="HandleOnKeyDown"
                         Clearable/>
                 </div>
-                
+
                 <div style="margin-top: 20px; margin-bottom: 10px">
-                                    <MudTextField
-                
-                                        Mask="@(new PatternMask("00000000000000"))"
-                                        Label="Current Account Balance"
-                                        T="string"
-                                        HelperText="@HelperText"
-                                        Immediate="true"
-                                        Required="true"
-                                        RequiredError="Balance is required!"
-                                        @bind-Value="DepositDto.CurrentAccountBalance"
-                                        Variant="@Variant.Outlined"
-                                        OnBlur="HandleOnKeyDown"
-                                        Clearable/>
-                                </div>
+                    <MudTextField
+
+                        Mask="@(new PatternMask("00000000000000"))"
+                        Label="Current Account Balance"
+                        T="string"
+                        HelperText="@CBHelperText"
+                        Immediate="true"
+                        Required="true"
+                        RequiredError="Balance is required!"
+                        @bind-Value="DepositDto.CurrentAccountBalance"
+                        Variant="@Variant.Outlined"
+                        @onblur="CBHandleOnKeyDown"
+                        Clearable/>
+                </div>
 
 
                 <div style="margin-top: 15px">
@@ -149,7 +149,7 @@ else
     private DepositDto DepositDto = new();
 
     [Parameter]
-    public DepositType EditDepositDto { get; set; }
+    public DepositType? EditDepositDto { get; set; }
 
     [Parameter]
     public bool ViewOnly { get; set; }
@@ -159,6 +159,8 @@ else
     MudDialogInstance MudDialog { get; set; }
 
     private string HelperText = "Enter Amount";
+    
+    private string CBHelperText = "Enter Current Balance Amount";
 
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
@@ -218,7 +220,8 @@ else
                         description = DepositDto.Description,
                         accountsUid = DepositDto.Account.Uuid,
                         amountDeposited = float.Parse(DepositDto.AmountDeposited),
-                        depositedDate = DepositDto.DepositedDate.ToString()
+                        depositedDate = DepositDto.DepositedDate.ToString(),
+                        currentBalance = float.Parse(DepositDto.CurrentAccountBalance)
                     }
                 });
 
@@ -233,7 +236,8 @@ else
                         description = DepositDto.Description,
                         accountsUid = DepositDto.Account.Uuid,
                         amountDeposited = float.Parse(DepositDto.AmountDeposited),
-                        depositedDate = DepositDto.DepositedDate.ToString()
+                        depositedDate = DepositDto.DepositedDate.ToString(),
+                        currentBalance = float.Parse(DepositDto.CurrentAccountBalance)
                     }
                 });
 
@@ -263,7 +267,7 @@ else
             records = Accounts.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        // DepositDto.AccountRecord[] accountRecords = records.ToArray();
+    // DepositDto.AccountRecord[] accountRecords = records.ToArray();
 
         return records;
     }
@@ -274,6 +278,14 @@ else
         if (DepositDto?.AmountDeposited != null)
         {
             HelperText = float.Parse(DepositDto.AmountDeposited).ToString("N1");
+        }
+    }
+
+    private void CBHandleOnKeyDown()
+    {
+        if (DepositDto?.CurrentAccountBalance != null)
+        {
+            CBHelperText = float.Parse(DepositDto.CurrentAccountBalance).ToString("N1");
         }
     }
 
