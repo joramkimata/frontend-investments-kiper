@@ -1,0 +1,9 @@
+version: '3'
+services: 
+  app:
+    build:
+      context: .
+    ports:
+      - 9092:80
+    environment:
+      - BACKEND_URL=http://66.29.149.172:3332
